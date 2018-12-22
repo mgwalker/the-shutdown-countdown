@@ -95,7 +95,7 @@
         const now = moment.tz('America/New_York');
         const diff = moment.duration(shutdown.diff(moment()));
 
-        const minutes = 60 - (diff._data.hours * 60 + diff._data.minutes);
+        const minutes = diff._data.hours * 60 + diff._data.minutes - 60;
         // 1440 minutes in a day, but for last 60 minutes, rocket should be at
         // the tower
         const pct = 1 - minutes / 1440;
@@ -103,7 +103,7 @@
         // account for rocket width, tower width, and some padding
         const totalWidth =
           window.innerWidth - (now.isAfter(shutdown) ? 229 : 104) - 20;
-        console.log(totalWidth);
+
         return Math.min(totalWidth * pct, totalWidth);
       };
 
