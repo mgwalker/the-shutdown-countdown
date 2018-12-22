@@ -23,11 +23,22 @@
         vertical-align: middle;
         text-align: center;
       }
+
+      img#rocket {
+        position: fixed;
+        bottom: 0;
+      }
+      img#tower {
+        position: fixed;
+        bottom: 20px;
+        right: 10px;
+      }
     </style>
   </head>
   <script type="text/javascript" src="moment.js"></script>
   <script type="text/javascript" src="moment-timezone.js"></script>
   <body>
+    <img id="tower" /><img id="rocket" />
     <div class="table">
       <div class="cell">
         <span id="what"> The next US government shut down is in</span>
@@ -62,14 +73,58 @@
         return str;
       };
 
+      const getRocketImgPath = function() {
+        const now = moment.tz('America/New_York');
+        const diff = moment.duration(shutdown.diff(moment()));
+
+        if (now.isAfter(shutdown)) {
+          return 'rocket-fallen.png';
+        } else if (diff._data.hours === 0 && diff._data.minutes < 10) {
+          const ts = Math.round(Date.now() / 700);
+          if (ts % 4 === 0) {
+            return 'rocket-off.png';
+          }
+          return 'rocket-warmup-' + (ts % 4) + '.png';
+        } else {
+          const ts = Math.round(Date.now() / 700);
+          return ts % 2 === 0 ? 'rocket-off.png' : 'rocket-on.png';
+        }
+      };
+
+      const getRocketLeft = function() {
+        const now = moment.tz('America/New_York');
+        const diff = moment.duration(shutdown.diff(moment()));
+
+        const minutes = diff._data.hours * 60 + diff._data.minutes;
+        // 1440 minutes in a day, but for last 60 minutes, rocket should be at
+        // the tower
+        const pct = 1 - minutes / 1500;
+
+        // account for rocket width, tower width, and some padding
+        const totalWidth =
+          window.innerWidth - (now.isAfter(shutdown) ? 229 : 104) - 20;
+        return Math.min(totalWidth * pct, totalWidth);
+      };
+
       const update = function() {
         const now = moment.tz('America/New_York');
         const diff = moment.duration(shutdown.diff(moment()));
 
+        const notYetShutdown = now.isBefore(shutdown);
+
         document.getElementById('when').innerText = squash(diff._data);
-        document.getElementById('what').innerText = now.isBefore(shutdown)
+        document.getElementById('what').innerText = notYetShutdown
           ? 'The next US government shut down is in'
           : 'The US government has been shut down for';
+
+        if (!notYetShutdown || diff._data.days === 0) {
+          const rocketImg = document.getElementById('rocket');
+          const towerImg = document.getElementById('tower');
+
+          rocketImg.setAttribute('src', getRocketImgPath());
+          rocketImg.style.left = getRocketLeft() + 'px';
+          towerImg.setAttribute('src', 'tower.png');
+        }
       };
 
       update();
