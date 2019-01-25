@@ -54,19 +54,26 @@
 
       const squash = function(data) {
         let str = '';
-        const keys = ['years', 'months', 'days', 'hours', 'minutes', 'seconds'];
-        keys.forEach(function(key, i) {
-          const value = Math.abs(data[key]);
 
-          if (value > 0) {
+        let seconds = data.asSeconds();
+        const units = [
+          [86400, 'days'],
+          [3600, 'hours'],
+          [60, 'minutes'],
+          [1, 'seconds']
+        ];
+        units.forEach(([div, label], i) => {
+          const whole = Math.floor(seconds / div);
+          if (whole) {
             if (str.length) {
               str += ', ';
-              if (i === keys.length - 1) {
+              if (i === units.length) {
                 str += 'and ';
               }
             }
-            str +=
-              value + ' ' + (value > 1 ? key : key.substr(0, key.length - 1));
+            str += whole + ' ' + label;
+
+            seconds -= whole * div;
           }
         });
 
@@ -109,11 +116,11 @@
 
       const update = function() {
         const now = moment.tz('America/New_York');
-        const diff = moment.duration(shutdown.diff(moment()));
+        const diff = moment.duration(moment().diff(shutdown));
 
         const notYetShutdown = now.isBefore(shutdown);
 
-        document.getElementById('when').innerText = squash(diff._data);
+        document.getElementById('when').innerText = squash(diff);
         document.getElementById('what').innerText = notYetShutdown
           ? 'The next US government shut down is in'
           : 'The US government has been shut down for';
