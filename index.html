@@ -88,7 +88,7 @@
 
         if (now.isAfter(shutdown)) {
           return 'rocket-fallen.png';
-        } else if (diff._data.hours === 0 && diff._data.minutes < 10) {
+        } else if (diff.hours() === 0 && diff.minutes() < 10) {
           const ts = Math.round(Date.now() / 700);
           if (ts % 4 === 0) {
             return 'rocket-off.png';
@@ -103,7 +103,7 @@
       const getRocketLeft = function() {
         const diff = dayjs.duration(shutdown.diff(dayjs()));
 
-        const minutes = diff._data.hours * 60 + diff._data.minutes - 60;
+        const minutes = diff.hours() * 60 + diff.minutes() - 60;
         // 1440 minutes in a day, but for last 60 minutes, rocket should be at
         // the tower
         const pct = 1 - minutes / 1440;
