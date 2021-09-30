@@ -101,6 +101,7 @@
       };
 
       const getRocketLeft = function() {
+        const now = dayjs();
         const diff = dayjs.duration(shutdown.diff(dayjs()));
 
         const minutes = diff.hours() * 60 + diff.minutes() - 60;
