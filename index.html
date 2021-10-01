@@ -35,10 +35,6 @@
       }
     </style>
   </head>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.6/dayjs.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.6/plugin/duration.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.6/plugin/timezone.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.6/plugin/utc.min.js"></script>
   <body>
     <img id="tower" /><img id="rocket" />
     <div class="table">
@@ -47,98 +43,6 @@
         <span id="when">...</span>
       </div>
     </div>
-    <script type="text/javascript">
-      dayjs.extend(window.dayjs_plugin_utc);
-      dayjs.extend(window.dayjs_plugin_duration);
-      dayjs.extend(window.dayjs_plugin_timezone);
-
-      const shutdown = dayjs.tz("2021-12-04 00:00", "America/New_York")
-
-      const squash = function(data) {
-        let str = '';
-
-        let seconds = Math.abs(data.asSeconds());
-        const units = [
-          [86400, 'days'],
-          [3600, 'hours'],
-          [60, 'minutes'],
-          [1, 'seconds']
-        ];
-        units.forEach(([div, label], i) => {
-          const whole = Math.floor(seconds / div);
-          if (whole) {
-            if (str.length) {
-              str += ', ';
-              if (i === units.length) {
-                str += 'and ';
-              }
-            }
-            str += whole + ' ' + label;
-
-            seconds -= whole * div;
-          }
-        });
-
-        return str;
-      };
-
-      const getRocketImgPath = function() {
-        const now = dayjs();
-        const diff = dayjs.duration(shutdown.diff(dayjs()));
-
-        if (now.isAfter(shutdown)) {
-          return 'rocket-fallen.png';
-        } else if (diff.hours() === 0 && diff.minutes() < 10) {
-          const ts = Math.round(Date.now() / 700);
-          if (ts % 4 === 0) {
-            return 'rocket-off.png';
-          }
-          return 'rocket-warmup-' + (ts % 4) + '.png';
-        } else {
-          const ts = Math.round(Date.now() / 700);
-          return ts % 2 === 0 ? 'rocket-off.png' : 'rocket-on.png';
-        }
-      };
-
-      const getRocketLeft = function() {
-        const now = dayjs();
-        const diff = dayjs.duration(shutdown.diff(dayjs()));
-
-        const minutes = diff.hours() * 60 + diff.minutes() - 60;
-        // 1440 minutes in a day, but for last 60 minutes, rocket should be at
-        // the tower
-        const pct = 1 - minutes / 1440;
-
-        // account for rocket width, tower width, and some padding
-        const totalWidth =
-          window.innerWidth - (now.isAfter(shutdown) ? 229 : 104) - 20;
-
-        return Math.min(totalWidth * pct, totalWidth);
-      };
-
-      const update = function() {
-        const now = dayjs();
-        const diff = dayjs.duration(dayjs().diff(shutdown));
-
-        const notYetShutdown = now.isBefore(shutdown);
-
-        document.getElementById('when').innerText = squash(diff);
-        document.getElementById('what').innerText = notYetShutdown
-          ? 'The next US government shut down could occur in'
-          : 'The US government has been shut down for';
-
-        if (!notYetShutdown || diff.days() === 0) {
-          const rocketImg = document.getElementById('rocket');
-          const towerImg = document.getElementById('tower');
-
-          rocketImg.setAttribute('src', getRocketImgPath());
-          rocketImg.style.left = getRocketLeft() + 'px';
-          towerImg.setAttribute('src', 'tower.png');
-        }
-      };
-
-      update();
-      setInterval(update, 50);
-    </script>
+    <script type="module" src="main.js"></script>
   </body>
 </html>
