@@ -1,64 +1,45 @@
-import dayjs from "./dayjs.js";
+import { doBlinky, stopBlinky } from "./blinky.js";
+import { doExhaust, stopExhaust } from "./exhaust.js";
+import { timeUntilShutdown } from "./time.js";
 
-const rocket = document.getElementById("rocket");
-const tower = document.getElementById("tower");
+const ROCKET_DAYS = 7;
 
-const getRocketImage = (isShutdown, diff) => {
-  // Already shutdown
-  if (isShutdown) {
-    return "rocket-fallen.png";
-  }
+const cssRule = Array.from(document.styleSheets[0].cssRules).find(
+  (r) => r.selectorText === ".show-rocket"
+);
 
-  const ts = Math.round(Date.now() / 700);
+const updateRocket = () => {
+  const until = timeUntilShutdown();
+  const days = until.asDays();
 
-  // 10 minutes away
-  if (diff.hours() === 0 && diff.minutes() < 10) {
-    if (ts % 4 === 0) {
-      return "rocket-off.png";
+  if (days <= ROCKET_DAYS) {
+    cssRule.style.display = "initial";
+    doBlinky();
+
+    // The rocket should reach the tower halfway through the last day
+    const halfth = ROCKET_DAYS - 0.5;
+    const distance = Math.min((ROCKET_DAYS - days) / halfth, 1);
+
+    const { offsetWidth: rocketWidth } = document.querySelector("#rocket");
+
+    const left = distance * (document.body.offsetWidth - rocketWidth);
+    document.querySelector("#rocket-stack").style.left = `${left}px`;
+
+    if (until.asHours() < 12) {
+      doExhaust();
     }
-    return `rocket-warmup-${ts % 4}.png`;
-  }
-
-  // Longer
-  return ts % 2 === 0 ? "rocket-off.png" : "rocket-on.png";
-};
-
-const getRocketLocation = (isShutdown, diff) => {
-  // Account for rocket width, tower width, and some padding
-  const totalWidth = window.innerWidth - (isShutdown ? 229 : 104) - 20;
-
-  // If we're already shutdown, no need for additional calculation.
-  if (isShutdown) {
-    return totalWidth;
-  }
-
-  // 1440 minutes in a day (usually), but for last 60 minutes, rocket should be
-  // at the tower
-  const minutes = Math.round(diff.asMinutes()) - 60;
-  const percent = 1 - minutes / 1440;
-
-  return Math.min(totalWidth * percent, totalWidth);
-};
-
-const run = (shutdown) => {
-  const now = dayjs();
-  const timeBetween = dayjs.duration(now.diff(shutdown));
-  const isShutdown = now.isAfter(shutdown);
-
-  if (isShutdown || timeBetween.days() === 0) {
-    rocket.setAttribute("src", getRocketImage(isShutdown, timeBetween));
-    rocket.style.left = getRocketLocation(isShutdown, timeBetween) + "px";
-    tower.setAttribute("src", "tower.png");
+    if (days < 0) {
+      stopExhaust();
+      document.querySelector("#rocket").setAttribute("class", "fallen");
+    }
+  } else {
+    stopBlinky();
+    stopExhaust();
+    cssRule.style.display = "none";
   }
 };
 
-let interval = null;
-export const updateRocket = (shutdown) => {
-  if (!interval) {
-    const runner = () => {
-      run(shutdown);
-    };
-    runner();
-    interval = setInterval(runner, 100);
-  }
-};
+updateRocket();
+setInterval(updateRocket, 5_000);
+
+window.addEventListener("resize", updateRocket);

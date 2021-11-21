@@ -1,0 +1,92 @@
+body {
+  background: black;
+  font-family: sans-serif;
+}
+
+div.table {
+  display: table;
+  height: 90vh;
+  left: 0;
+  padding: 5vh 5vw;
+  position: fixed;
+  top: 0;
+  width: 90vw;
+}
+
+div.table div.cell {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
+
+div#until {
+  color: white;
+  font-size: 6vh;
+  font-weight: bold;
+  text-shadow: -1px -1px 0px black, -1px 1px 0px black, 1px -1px 0px black,
+    1px 1px 0px black, 0 0 5px black;
+}
+
+.star {
+  position: absolute;
+  background: white;
+}
+
+.show-rocket {
+  bottom: 0;
+  display: none;
+  position: absolute;
+}
+
+#tower-back,
+#tower-front {
+  right: 0;
+}
+
+#tower-back img {
+  max-height: 47.55vh;
+}
+
+#tower-front img {
+  max-height: 47.55vh;
+}
+
+#rocket-stack {
+  overflow-y: clip;
+}
+
+img#rocket,
+img#crawler {
+  max-height: 40vh;
+}
+
+img#rocket {
+  transition: transform 7s cubic-bezier(1, -0.2, 1, 1);
+}
+
+img#rocket.fallen {
+  transform-origin: 33.3% 91.8%;
+  transform: rotate(-95.6deg);
+}
+
+img#crawler {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+}
+
+#rocket-stack img.exhaust {
+  left: 25%;
+  max-height: 10%;
+  opacity: 1;
+  overflow-y: hidden;
+  position: absolute;
+  top: 75%;
+  transition: left 2s, max-height 3s, opacity 3s, top 3s;
+}
+#rocket-stack img.exhaust.animate {
+  opacity: 0;
+  left: -20%;
+  max-height: 25%;
+  top: 30%;
+}
