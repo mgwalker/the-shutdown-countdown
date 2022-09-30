@@ -3,7 +3,7 @@ import "https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.7/plugin/duration.min.
 import "https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.7/plugin/timezone.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.7/plugin/utc.min.js";
 
-const SHUTDOWN_DATE = "2022-10-01";
+const SHUTDOWN_DATE = "2022-12-17";
 const TIMEZONE = "America/New_York";
 
 window.dayjs.extend(window.dayjs_plugin_utc);
