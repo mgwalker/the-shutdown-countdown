@@ -1,0 +1,28 @@
+name: build API
+
+on: push
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: update API
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: update API
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { default: fs } = await import("fs/promises");
+            const { SHUTDOWN_DATE } = await import("${{ github.workspace }}/meta.js");
+            const api = { shutdownDate: SHUTDOWN_DATE };
+            await fs.writeFile("${{ github.workspace }}/api.json", JSON.stringify(api, null, 2), { encoding: "utf-8" });
+
+      - name: commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: "updating API"
