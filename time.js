@@ -3,7 +3,7 @@ import "https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.7/plugin/duration.min.
 import "https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.7/plugin/timezone.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.7/plugin/utc.min.js";
 
-import { SHUTDOWN_DATE, TIMEZONE } from "./meta";
+import { SHUTDOWN_DATE, TIMEZONE } from "./meta.js";
 
 window.dayjs.extend(window.dayjs_plugin_utc);
 window.dayjs.extend(window.dayjs_plugin_duration);
