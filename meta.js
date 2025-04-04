@@ -1,2 +1,2 @@
-export const SHUTDOWN_DATE = "2025-03-15";
+export const SHUTDOWN_DATE = "2025-10-01";
 export const TIMEZONE = "America/New_York";
