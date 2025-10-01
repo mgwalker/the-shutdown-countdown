@@ -5,7 +5,7 @@ const updateCountdown = () => {
 
   // Squash the units into pluralized strings
   const times = [
-    ["day", Math.floor(until.asDays())],
+    ["day", Math.floor(Math.abs(until.asDays()))],
     ["hour", until.hours()],
     ["minute", until.minutes()],
     ["second", until.seconds()],
