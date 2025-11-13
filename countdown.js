@@ -26,10 +26,10 @@ const updateCountdown = () => {
 
   const message =
     until.asSeconds() > 0
-      ? "The next US government shut down could occur in"
+      ? "The US government isn't shut down, but it's still badly broken. And the next US government shut down could occur in"
       : "The US government has been shut down for";
 
-  document.getElementById("until").innerText = `${message} ${timeString}`;
+  document.getElementById("until").innerHTML = `${message} ${timeString}`;
 };
 
 updateCountdown();
